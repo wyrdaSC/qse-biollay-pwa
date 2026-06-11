@@ -7,6 +7,7 @@
 //   #/parametres               -> chantiers + participants
 
 import { rendreAccueil } from "./views/home.js";
+import { rendreFormulaire } from "./views/form.js";
 
 const ECRAN = () => document.getElementById("ecran");
 
@@ -52,7 +53,7 @@ const ROUTES = [
     motif: /^\/fiche\/nouvelle\/(\w+)$/,
     gestion: (m) => {
       majOngletActif("");
-      rendreProvisoire(`Nouvelle fiche — ${m[1]}`);
+      rendreFormulaire(m[1]);
     },
   },
   {
