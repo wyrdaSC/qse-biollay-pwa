@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#1A3557">
+  <meta name="description" content="Fiches de contrôle qualité — Travaux Spéciaux Biollay SA">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+
+  <!-- iOS : installation en plein écran -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="QSE Biollay">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <title>QSE Biollay</title>
+</head>
+<body>
+  <header class="topbar">
+    <img class="topbar__logo" src="icons/logo-biollay.png" alt="Biollay">
+    <span class="topbar__title">QSE</span>
+    <span id="reseau" class="topbar__net" title="Statut réseau"></span>
+  </header>
+
+  <main id="ecran"></main>
+
+  <nav class="tabbar">
+    <a class="tabbar__item" href="#/" data-route="/">
+      <span class="tabbar__icone">🏠</span>Accueil
+    </a>
+    <a class="tabbar__item" href="#/historique" data-route="/historique">
+      <span class="tabbar__icone">📋</span>Historique
+    </a>
+    <a class="tabbar__item" href="#/parametres" data-route="/parametres">
+      <span class="tabbar__icone">⚙️</span>Paramètres
+    </a>
+  </nav>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

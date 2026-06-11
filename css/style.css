@@ -1,0 +1,104 @@
+/* Application QSE Biollay — feuille de style mobile-first.
+   Palette : bleu foncé #1A3557, blanc, gris clair. */
+
+:root {
+  --bleu: #1A3557;
+  --bleu-clair: #2a4d7a;
+  --gris: #f0f2f5;
+  --gris-bord: #d8dde3;
+  --texte: #1c2530;
+  --vert: #228B22;
+  --rouge: #c0392b;
+  --rayon: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--texte);
+  background: var(--gris);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* --- Barre supérieure --- */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bleu); color: #fff;
+  padding: 10px 14px;
+}
+.topbar__logo {
+  height: 30px; width: auto;
+  /* logo Biollay en rouge sur fond bleu : on le passe en blanc pour la lisibilité */
+  filter: brightness(0) invert(1);
+}
+.topbar__title { flex: 1; font-size: 16px; font-weight: 600; letter-spacing: .5px; }
+.topbar__net { width: 12px; height: 12px; border-radius: 50%; background: #888; flex: none; }
+.topbar__net.online { background: #43d17a; }
+.topbar__net.offline { background: #e0a800; }
+
+/* --- Contenu --- */
+#ecran { padding: 16px 14px 90px; max-width: 900px; margin: 0 auto; }
+.page-title { font-size: 20px; margin: 6px 0 14px; color: var(--bleu); }
+.page-title small { font-weight: 400; color: #667; font-size: 14px; }
+.page-subtitle { font-size: 16px; margin: 22px 0 10px; color: var(--bleu); }
+.vide { color: #889; font-style: italic; }
+
+/* --- Barre de navigation inférieure --- */
+.tabbar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
+  display: flex;
+  background: #fff; border-top: 1px solid var(--gris-bord);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.tabbar__item {
+  flex: 1; text-align: center; padding: 10px 4px 8px;
+  text-decoration: none; color: #667; font-size: 12px;
+}
+.tabbar__item.actif { color: var(--bleu); font-weight: 600; }
+.tabbar__icone { display: block; font-size: 20px; line-height: 1; margin-bottom: 2px; }
+
+/* --- Écran d'accueil --- */
+.grille-boutons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.carte-fiche {
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: 96px; padding: 14px;
+  background: var(--bleu); color: #fff; text-decoration: none;
+  border-radius: var(--rayon); box-shadow: 0 2px 5px rgba(0,0,0,.12);
+}
+.carte-fiche:active { background: var(--bleu-clair); }
+.carte-fiche__label { font-weight: 600; font-size: 15px; }
+.carte-fiche__sous { font-size: 12px; opacity: .8; margin-top: 4px; }
+
+.rappel {
+  background: #fff3cd; border: 1px solid #ffe69c; color: #664d03;
+  padding: 10px 12px; border-radius: var(--rayon); margin-bottom: 14px;
+}
+.rappel a { color: #664d03; }
+
+/* --- Listes de fiches --- */
+.liste-fiches { list-style: none; padding: 0; margin: 0; }
+.liste-fiches li { margin-bottom: 8px; }
+.liste-fiches a {
+  display: grid; grid-template-columns: 1fr auto; align-items: center;
+  background: #fff; border: 1px solid var(--gris-bord);
+  border-radius: var(--rayon); padding: 12px; text-decoration: none; color: var(--texte);
+}
+.liste-fiches__titre { font-weight: 600; grid-column: 1; }
+.liste-fiches__meta { grid-column: 1; font-size: 13px; color: #667; margin-top: 2px; }
+.badge {
+  grid-row: 1 / span 2; grid-column: 2;
+  font-size: 11px; padding: 4px 8px; border-radius: 20px; text-transform: capitalize;
+  background: var(--gris); color: #445;
+}
+.badge--brouillon { background: #e7ecf3; color: #445; }
+.badge--complet { background: #d4e7ff; color: #0b4a8a; }
+.badge--envoye { background: #d8f3df; color: #1c6b34; }
+.badge--conforme { background: #d8f3df; color: #1c6b34; }
+.badge--non-conforme { background: #fbe1de; color: var(--rouge); }
