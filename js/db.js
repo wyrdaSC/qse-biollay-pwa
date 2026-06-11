@@ -153,11 +153,16 @@ export async function listerUtilisateurs() {
   return tous.sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
 }
 
+// Ajoute un participant, sans rien faire s'il existe déjà (nom identique).
 export async function ajouterUtilisateur(nom, role) {
   nom = (nom || "").trim();
   if (!nom) return;
 
-  const store = await magasin("utilisateurs", "readwrite");
+  const db = await ouvrir();
+  const store = db.transaction("utilisateurs", "readwrite").objectStore("utilisateurs");
+  const existants = await promesseRequete(store.getAll());
+  if (existants.some((u) => u.nom === nom)) return;
+
   return promesseRequete(store.add({ nom, role: (role || "").trim() }));
 }
 

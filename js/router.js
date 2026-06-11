@@ -9,6 +9,8 @@
 import { rendreAccueil } from "./views/home.js";
 import { rendreFormulaire } from "./views/form.js";
 import { rendreConsultation } from "./views/consultation.js";
+import { rendreHistorique } from "./views/historique.js";
+import { rendreParametres } from "./views/parametres.js";
 import { getFiche } from "./db.js";
 
 const ECRAN = () => document.getElementById("ecran");
@@ -41,14 +43,14 @@ const ROUTES = [
     motif: /^\/historique$/,
     gestion: () => {
       majOngletActif("/historique");
-      rendreProvisoire("Historique");
+      rendreHistorique();
     },
   },
   {
     motif: /^\/parametres$/,
     gestion: () => {
       majOngletActif("/parametres");
-      rendreProvisoire("Paramètres");
+      rendreParametres();
     },
   },
   {

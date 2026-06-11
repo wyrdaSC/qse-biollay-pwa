@@ -189,3 +189,36 @@ body {
   display: flex; gap: 10px; margin: 18px 0 10px; flex-wrap: wrap;
 }
 .boutons-action .btn { flex: 1; min-width: 140px; }
+
+/* --- Historique : filtres --- */
+.filtres { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.champ-filtre {
+  flex: 1; min-width: 140px; font-size: 14px; padding: 9px 10px;
+  border: 1px solid var(--gris-bord); border-radius: var(--rayon);
+  background: #fff; color: var(--texte);
+}
+
+/* --- Paramètres : onglets, ajout, listes --- */
+.onglets-param { display: flex; gap: 8px; margin-bottom: 6px; }
+.onglet-param {
+  flex: 1; font-size: 14px; font-weight: 600; padding: 10px;
+  border: 1px solid var(--gris-bord); border-radius: var(--rayon);
+  background: #fff; color: #667; cursor: pointer;
+}
+.onglet-param.actif { background: var(--bleu); color: #fff; border-color: var(--bleu); }
+
+.ligne-ajout { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+.ligne-ajout input {
+  flex: 1; min-width: 120px; font-size: 15px; padding: 9px 10px;
+  border: 1px solid var(--gris-bord); border-radius: var(--rayon);
+  background: #fff; color: var(--texte);
+}
+.ligne-ajout .btn { flex: none; }
+
+.liste-param { list-style: none; padding: 0; margin: 0; }
+.liste-param li {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #fff; border: 1px solid var(--gris-bord);
+  border-radius: var(--rayon); padding: 10px 12px; margin-bottom: 8px;
+}
+.liste-param li em { font-style: normal; color: #667; }
