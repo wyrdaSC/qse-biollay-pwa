@@ -81,6 +81,10 @@ body {
   padding: 10px 12px; border-radius: var(--rayon); margin-bottom: 14px;
 }
 .rappel a { color: #664d03; }
+.rappel--install {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+}
+.rappel--install .btn { padding: 8px 14px; font-size: 14px; }
 
 /* --- Listes de fiches --- */
 .liste-fiches { list-style: none; padding: 0; margin: 0; }
@@ -184,6 +188,7 @@ body {
 .btn-principal:active { background: var(--bleu-clair); }
 .btn-secondaire { background: var(--gris); color: var(--bleu); border: 1px solid var(--gris-bord); }
 .btn-texte { background: none; color: var(--bleu); padding: 6px 0; text-decoration: underline; }
+.btn--desactive { opacity: .5; pointer-events: none; }
 
 .boutons-action {
   display: flex; gap: 10px; margin: 18px 0 10px; flex-wrap: wrap;

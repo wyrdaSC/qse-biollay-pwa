@@ -56,12 +56,13 @@ export async function rendreConsultation(id) {
     <section>
       <h2 class="page-subtitle">Envoyer par email</h2>
       <p class="legende">Téléchargez d'abord le PDF, puis joignez-le manuellement au courriel.</p>
+      ${!navigator.onLine ? `<p class="legende">Fonction email indisponible hors connexion.</p>` : ""}
       <div class="champ">
         <label for="champ-email-destinataire">Email du destinataire (optionnel)</label>
         <input type="email" id="champ-email-destinataire" placeholder="prenom.nom@biollaysa.ch">
       </div>
       <div class="boutons-action">
-        <a class="btn btn-secondaire" id="btn-email" href="#">Envoyer par email</a>
+        <a class="btn btn-secondaire ${!navigator.onLine ? "btn--desactive" : ""}" id="btn-email" href="#"${!navigator.onLine ? ' aria-disabled="true"' : ""}>Envoyer par email</a>
         ${fiche.statut !== "envoye" ? `<button type="button" class="btn btn-secondaire" id="btn-marquer-envoyee">Marquer comme envoyée</button>` : ""}
       </div>
     </section>
@@ -88,6 +89,7 @@ function brancherEvenements(fiche) {
 
   document.getElementById("btn-email").addEventListener("click", (evenement) => {
     evenement.preventDefault();
+    if (!navigator.onLine) return;
     const destinataire = document.getElementById("champ-email-destinataire").value.trim();
     const sujet = `[QSE] ${libelleType(fiche.type)} - ${fiche.chantier || ""} - ${fiche.date || ""}`;
     const corps = [

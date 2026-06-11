@@ -3,7 +3,7 @@
 // IMPORTANT : à chaque ajout/modification de fichier, incrémenter CACHE_VERSION
 // pour forcer la mise à jour du cache (sinon les anciens fichiers restent servis).
 
-const CACHE_VERSION = "v8";
+const CACHE_VERSION = "v9";
 const CACHE_NAME = `qse-biollay-${CACHE_VERSION}`;
 
 // Liste de toutes les ressources nécessaires au fonctionnement hors-ligne.
@@ -17,6 +17,7 @@ const RESSOURCES = [
   "./js/db.js",
   "./js/forms-def.js",
   "./js/util.js",
+  "./js/install.js",
   "./js/calculations.js",
   "./js/signature.js",
   "./js/pdf.js",

@@ -4,6 +4,7 @@
 import { FORM_TYPES } from "../forms-def.js";
 import { listerFiches, compterNonEnvoyees } from "../db.js";
 import { echapperHtml } from "../util.js";
+import { installationDisponible, lancerInstallation } from "../install.js";
 
 const STATUT_LABELS = {
   brouillon: "Brouillon",
@@ -55,11 +56,41 @@ export async function rendreAccueil() {
       ? `<div class="rappel">${nonEnvoyees} fiche${nonEnvoyees > 1 ? "s" : ""} non envoyée${nonEnvoyees > 1 ? "s" : ""}</div>`
       : "";
 
+  const banniereInstall = installationDisponible()
+    ? `
+      <div class="rappel rappel--install">
+        <span>Installer l'application sur cet appareil ?</span>
+        <button type="button" class="btn btn-secondaire" id="btn-installer">Installer</button>
+      </div>
+    `
+    : "";
+
   ecran.innerHTML = `
     <h1 class="page-title">Accueil</h1>
     ${rappel}
+    ${banniereInstall}
     <div class="grille-boutons">${cartes}</div>
     <h2 class="page-subtitle">Fiches récentes</h2>
     ${recentes.length ? `<ul class="liste-fiches">${liste}</ul>` : `<p class="vide">Aucune fiche enregistrée pour l'instant.</p>`}
   `;
+
+  const btnInstaller = document.getElementById("btn-installer");
+  if (btnInstaller) {
+    btnInstaller.addEventListener("click", async () => {
+      await lancerInstallation();
+      rendreAccueil();
+    });
+  }
+
+  // L'événement beforeinstallprompt peut survenir après ce premier rendu :
+  // on réaffiche l'accueil pour faire apparaître la bannière, si on y est toujours.
+  window.addEventListener(
+    "qse:installation-disponible",
+    () => {
+      if ((window.location.hash.replace(/^#/, "") || "/") === "/") {
+        rendreAccueil();
+      }
+    },
+    { once: true }
+  );
 }
