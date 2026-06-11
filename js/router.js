@@ -8,6 +8,8 @@
 
 import { rendreAccueil } from "./views/home.js";
 import { rendreFormulaire } from "./views/form.js";
+import { rendreConsultation } from "./views/consultation.js";
+import { getFiche } from "./db.js";
 
 const ECRAN = () => document.getElementById("ecran");
 
@@ -57,10 +59,22 @@ const ROUTES = [
     },
   },
   {
+    motif: /^\/fiche\/(\d+)\/modifier$/,
+    gestion: async (m) => {
+      majOngletActif("");
+      const fiche = await getFiche(Number(m[1]));
+      if (!fiche) {
+        rendreProvisoire("Fiche introuvable");
+        return;
+      }
+      rendreFormulaire(fiche.type, fiche);
+    },
+  },
+  {
     motif: /^\/fiche\/(\d+)$/,
     gestion: (m) => {
       majOngletActif("");
-      rendreProvisoire(`Fiche n°${m[1]}`);
+      rendreConsultation(Number(m[1]));
     },
   },
 ];

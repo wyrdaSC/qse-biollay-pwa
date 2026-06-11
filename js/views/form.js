@@ -15,10 +15,16 @@ import {
   SEUIL_XM,
   SEUIL_XM_S,
 } from "../forms-def.js";
-import { listerChantiers, listerUtilisateurs } from "../db.js";
-import { echapperHtml } from "../util.js";
-import { analyserEssai, conformiteReception, conformiteAmbianceLigne } from "../calculations.js";
+import { listerChantiers, listerUtilisateurs, creerFiche, majFiche, ajouterChantier } from "../db.js";
+import { echapperHtml, telechargerBlob } from "../util.js";
+import {
+  analyserEssai,
+  conformiteReception,
+  conformiteAmbiance,
+  conformiteAmbianceLigne,
+} from "../calculations.js";
 import { initialiserPads } from "../signature.js";
+import { genererPdf, nomFichier } from "../pdf.js";
 
 // Pads de signature de l'écran courant (réutilisés en Phase 6 pour l'enregistrement).
 let padsActuels = {};
@@ -74,7 +80,7 @@ export async function rendreFormulaire(type, ficheExistante = null) {
     </datalist>
   `;
 
-  brancherEvenements(type);
+  brancherEvenements(type, ficheExistante);
 }
 
 // --- En-tête commun ---------------------------------------------------------
@@ -292,7 +298,7 @@ function zoneSignature(role, libelle, data, entete) {
 
 // --- Évènements ----------------------------------------------------------------
 
-function brancherEvenements(type) {
+function brancherEvenements(type, ficheExistante) {
   const btnAjouter = document.getElementById("btn-ajouter-mesure");
   if (btnAjouter) {
     btnAjouter.addEventListener("click", () => {
@@ -308,6 +314,13 @@ function brancherEvenements(type) {
   formulaire.addEventListener("change", () => recalculer(type));
 
   padsActuels = initialiserPads(document.getElementById("ecran"));
+
+  document.getElementById("btn-brouillon").addEventListener("click", () => {
+    enregistrerFiche(type, ficheExistante, "brouillon");
+  });
+  document.getElementById("btn-pdf").addEventListener("click", () => {
+    enregistrerFiche(type, ficheExistante, "complet");
+  });
 
   recalculer(type);
 }
@@ -448,4 +461,136 @@ function recalculerReception() {
   const conforme = conformiteReception(reponses, remontee ? remontee.value : "non");
 
   majBadge(document.getElementById("badge-conformite"), conforme);
+}
+
+// --- Enregistrement et génération PDF (§8, Phase 6) -----------------------------
+
+// Lit les champs d'en-tête communs (par id, pour éviter toute ambiguïté avec
+// les data-champ de même nom dans le tableau « ambiance »).
+function recupererEntete() {
+  const entete = {};
+  CHAMPS_COMMUNS.forEach(([cle]) => {
+    const champ = document.getElementById(`champ-${cle}`);
+    entete[cle] = champ ? champ.value.trim() : "";
+  });
+  return entete;
+}
+
+function recupererSignatureMeta() {
+  const meta = {};
+  ["applicateur", "controleur"].forEach((role) => {
+    meta[`nom_${role}`] = document.querySelector(`[data-champ="nom_${role}"]`).value.trim();
+    meta[`date_${role}`] = document.querySelector(`[data-champ="date_${role}"]`).value;
+  });
+  return meta;
+}
+
+function recupererDonneesReception() {
+  const reponses = {};
+  const solutions = {};
+  RECEPTION_CRITERES.forEach((critere, i) => {
+    const coche = document.querySelector(`input[name="critere-${i}"]:checked`);
+    reponses[critere] = coche ? coche.value : "";
+    const solution = document.querySelector(`[data-solution-index="${i}"]`);
+    solutions[critere] = solution ? solution.value.trim() : "";
+  });
+
+  const remontee = document.querySelector('input[name="remontee_humidite"]:checked');
+  return {
+    remontee_humidite: remontee ? remontee.value : "non",
+    criteres: reponses,
+    solutions,
+  };
+}
+
+function recupererMesuresEssai() {
+  const tbody = document.querySelector("#tableau-mesures tbody");
+  return [...tbody.querySelectorAll("tr")].map((ligne) => ({
+    rupture: ligne.querySelector('[data-champ="rupture"]').value,
+    si: ligne.querySelector('[data-champ="si"]').value.trim(),
+    fi: ligne.querySelector('[data-champ="fi"]').value.trim(),
+  }));
+}
+
+function recupererMesuresAmbiance() {
+  const tbody = document.querySelector("#tableau-mesures tbody");
+  return [...tbody.querySelectorAll("tr")].map((ligne) => {
+    const mesure = {};
+    AMBIANCE_COLONNES.forEach((col) => {
+      const champ = ligne.querySelector(`[data-champ="${col.cle}"]`);
+      mesure[col.cle] = champ ? champ.value.trim() : "";
+    });
+    return mesure;
+  });
+}
+
+function recupererDonnees(type) {
+  let data;
+  switch (type) {
+    case "reception":
+      data = recupererDonneesReception();
+      break;
+    case "cohesion":
+    case "adherence":
+      data = { mesures: recupererMesuresEssai() };
+      break;
+    case "ambiance":
+      data = { mesures: recupererMesuresAmbiance() };
+      break;
+    default:
+      data = {};
+  }
+  Object.assign(data, recupererSignatureMeta());
+  return data;
+}
+
+function calculerConformite(type, data) {
+  switch (type) {
+    case "reception":
+      return conformiteReception(data.criteres, data.remontee_humidite);
+    case "cohesion":
+      return analyserEssai(data.mesures, COHESION_GARDER).conforme;
+    case "adherence":
+      return analyserEssai(data.mesures, ADHERENCE_GARDER).conforme;
+    case "ambiance":
+      return conformiteAmbiance(data.mesures);
+    default:
+      return null;
+  }
+}
+
+// Récupère la signature dessinée, ou celle déjà enregistrée si le pad n'a pas été modifié.
+function recupererSignature(role, ficheExistante) {
+  const pad = padsActuels[role];
+  if (pad && !pad.estVide()) return pad.versDataUrl();
+  return ficheExistante?.[`signature_${role}`] || "";
+}
+
+async function enregistrerFiche(type, ficheExistante, statut) {
+  const entete = recupererEntete();
+  const data = recupererDonnees(type);
+  const conforme = calculerConformite(type, data);
+
+  const fiche = {
+    type,
+    ...entete,
+    data,
+    signature_applicateur: recupererSignature("applicateur", ficheExistante),
+    signature_controleur: recupererSignature("controleur", ficheExistante),
+    statut,
+    conforme,
+  };
+
+  await ajouterChantier(entete.chantier);
+
+  const sauvegardee = ficheExistante?.id
+    ? await majFiche(ficheExistante.id, fiche)
+    : await creerFiche(fiche);
+
+  if (statut === "complet") {
+    const blob = await genererPdf(sauvegardee);
+    telechargerBlob(blob, nomFichier(sauvegardee));
+  }
+
+  window.location.hash = `#/fiche/${sauvegardee.id}`;
 }
