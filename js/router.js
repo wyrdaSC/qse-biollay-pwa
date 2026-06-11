@@ -1,46 +1,83 @@
 // Routeur par hash (#/...).
-// Phase 1 : squelette minimal qui affiche un écran d'attente et met en
-// surbrillance l'onglet actif. Les vraies routes seront branchées en Phase 3.
+// Routes :
+//   #/                         -> écran d'accueil
+//   #/fiche/nouvelle/:type     -> nouveau formulaire du type
+//   #/fiche/:id                -> consultation (ou édition si brouillon)
+//   #/historique               -> liste filtrable
+//   #/parametres               -> chantiers + participants
+
+import { rendreAccueil } from "./views/home.js";
 
 const ECRAN = () => document.getElementById("ecran");
 
+// Affiche un écran provisoire pour les routes pas encore implémentées.
 function rendreProvisoire(titre) {
   ECRAN().innerHTML = `
     <h1 class="page-title">${titre}</h1>
-    <p class="vide">Écran en cours de construction (Phase 3).</p>
+    <p class="vide">Écran en cours de construction.</p>
   `;
 }
 
-// Met à jour la classe "actif" sur l'onglet correspondant à la route.
+// Met en surbrillance l'onglet de la barre du bas correspondant à la route
+// (chaîne vide = aucun onglet actif, par ex. sur un formulaire).
 function majOngletActif(route) {
   document.querySelectorAll(".tabbar__item").forEach((lien) => {
     lien.classList.toggle("actif", lien.dataset.route === route);
   });
 }
 
-function rendre() {
-  // On ne garde que le premier segment de la route pour l'instant
-  // (#/, #/historique, #/parametres, ...).
-  const hash = window.location.hash.replace(/^#/, "") || "/";
-  const segment = "/" + (hash.split("/")[1] || "");
-
-  switch (segment) {
-    case "/historique":
+const ROUTES = [
+  {
+    motif: /^\/$/,
+    gestion: () => {
+      majOngletActif("/");
+      rendreAccueil();
+    },
+  },
+  {
+    motif: /^\/historique$/,
+    gestion: () => {
       majOngletActif("/historique");
       rendreProvisoire("Historique");
-      break;
-    case "/parametres":
+    },
+  },
+  {
+    motif: /^\/parametres$/,
+    gestion: () => {
       majOngletActif("/parametres");
       rendreProvisoire("Paramètres");
-      break;
-    case "/fiche":
+    },
+  },
+  {
+    motif: /^\/fiche\/nouvelle\/(\w+)$/,
+    gestion: (m) => {
       majOngletActif("");
-      rendreProvisoire("Fiche");
-      break;
-    default:
-      majOngletActif("/");
-      rendreProvisoire("Accueil");
+      rendreProvisoire(`Nouvelle fiche — ${m[1]}`);
+    },
+  },
+  {
+    motif: /^\/fiche\/(\d+)$/,
+    gestion: (m) => {
+      majOngletActif("");
+      rendreProvisoire(`Fiche n°${m[1]}`);
+    },
+  },
+];
+
+function rendre() {
+  const hash = window.location.hash.replace(/^#/, "") || "/";
+
+  for (const route of ROUTES) {
+    const correspondance = hash.match(route.motif);
+    if (correspondance) {
+      route.gestion(correspondance);
+      return;
+    }
   }
+
+  // Route inconnue -> retour à l'accueil.
+  majOngletActif("/");
+  rendreAccueil();
 }
 
 export function demarrerRouteur() {
