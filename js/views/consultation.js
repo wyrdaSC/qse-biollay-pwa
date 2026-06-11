@@ -93,14 +93,26 @@ function brancherEvenements(fiche) {
     const corps = [
       "Bonjour,",
       "",
-      `Veuillez trouver ci-joint la fiche de contrôle « ${libelleType(fiche.type)} » pour le chantier ${fiche.chantier || "—"} (${fiche.date || "—"}).`,
+      `Veuillez trouver ci-joint la fiche de contrôle « ${libelleType(fiche.type)} » pour le chantier ${fiche.chantier || "—"} en date du ${fiche.date || "—"}.`,
       "",
-      "Le PDF doit être téléchargé puis joint manuellement à ce message.",
+      "IMPORTANT : pensez à joindre le fichier PDF préalablement téléchargé depuis l'application.",
       "",
       "Cordialement",
     ].join("\n");
     window.location.href =
       `mailto:${encodeURIComponent(destinataire)}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
+
+    if (fiche.statut !== "envoye") {
+      window.addEventListener(
+        "focus",
+        () => {
+          if (confirm("Marquer cette fiche comme « Envoyée » ?")) {
+            definirStatut(fiche.id, "envoye").then(() => rendreConsultation(fiche.id));
+          }
+        },
+        { once: true }
+      );
+    }
   });
 
   const btnMarquer = document.getElementById("btn-marquer-envoyee");
