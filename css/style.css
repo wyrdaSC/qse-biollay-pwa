@@ -136,6 +136,8 @@ body {
 }
 .tableau-mesures input.champ-solution { min-width: 140px; text-align: left; }
 .tableau-mesures td[data-cell] { font-weight: 600; white-space: nowrap; }
+.tableau-mesures td[data-cell].conforme { color: #1c6b34; }
+.tableau-mesures td[data-cell].non-conforme { color: var(--rouge); }
 
 .legende { font-size: 13px; color: #667; font-style: italic; margin: 0 0 8px; }
 

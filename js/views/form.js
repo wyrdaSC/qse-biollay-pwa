@@ -7,7 +7,9 @@ import {
   CHAMPS_COMMUNS,
   RECEPTION_CRITERES,
   COHESION_RUPTURES,
+  COHESION_GARDER,
   ADHERENCE_RUPTURES,
+  ADHERENCE_GARDER,
   NB_MESURES_DEFAUT,
   AMBIANCE_COLONNES,
   SEUIL_XM,
@@ -15,6 +17,11 @@ import {
 } from "../forms-def.js";
 import { listerChantiers, listerUtilisateurs } from "../db.js";
 import { echapperHtml } from "../util.js";
+import { analyserEssai, conformiteReception, conformiteAmbianceLigne } from "../calculations.js";
+import { initialiserPads } from "../signature.js";
+
+// Pads de signature de l'écran courant (réutilisés en Phase 6 pour l'enregistrement).
+let padsActuels = {};
 
 export async function rendreFormulaire(type, ficheExistante = null) {
   const ecran = document.getElementById("ecran");
@@ -49,8 +56,8 @@ export async function rendreFormulaire(type, ficheExistante = null) {
 
       <section>
         <h2 class="page-subtitle">Signatures</h2>
-        ${zoneSignature("applicateur", "Applicateur", data)}
-        ${zoneSignature("controleur", "Contrôleur extérieur", data)}
+        ${zoneSignature("applicateur", "Applicateur", data, entete)}
+        ${zoneSignature("controleur", "Contrôleur extérieur", data, entete)}
       </section>
 
       <div class="boutons-action">
@@ -256,9 +263,11 @@ function ligneAmbiance(mesure, index) {
 
 // --- Signatures ---------------------------------------------------------------
 
-function zoneSignature(role, libelle, data) {
+function zoneSignature(role, libelle, data, entete) {
   const nom = data[`nom_${role}`] || "";
   const date = data[`date_${role}`] || "";
+  const signatureExistante = entete[`signature_${role}`] || "";
+  const attrInitial = signatureExistante ? ` data-initial="${echapperHtml(signatureExistante)}"` : "";
 
   return `
     <div class="signature-zone">
@@ -274,7 +283,7 @@ function zoneSignature(role, libelle, data) {
         </div>
       </div>
       <div class="pad-signature-conteneur">
-        <canvas class="pad-signature" data-pad="${role}" width="320" height="140"></canvas>
+        <canvas class="pad-signature" data-pad="${role}" width="320" height="140"${attrInitial}></canvas>
         <button type="button" class="btn btn-texte" data-effacer-pad="${role}">Effacer la signature</button>
       </div>
     </div>
@@ -286,16 +295,30 @@ function zoneSignature(role, libelle, data) {
 function brancherEvenements(type) {
   const btnAjouter = document.getElementById("btn-ajouter-mesure");
   if (btnAjouter) {
-    btnAjouter.addEventListener("click", () => ajouterMesure(type));
+    btnAjouter.addEventListener("click", () => {
+      ajouterMesure(type);
+      recalculer(type);
+    });
   }
 
-  document.querySelectorAll('[data-action="supprimer-ligne"]').forEach((bouton) => {
-    bouton.addEventListener("click", supprimerLigne);
-  });
+  brancherSuppressions(type);
+
+  const formulaire = document.getElementById("formulaire-fiche");
+  formulaire.addEventListener("input", () => recalculer(type));
+  formulaire.addEventListener("change", () => recalculer(type));
+
+  padsActuels = initialiserPads(document.getElementById("ecran"));
+
+  recalculer(type);
 }
 
-function supprimerLigne(evenement) {
-  evenement.target.closest("tr").remove();
+function brancherSuppressions(type) {
+  document.querySelectorAll('[data-action="supprimer-ligne"]').forEach((bouton) => {
+    bouton.addEventListener("click", (evenement) => {
+      evenement.target.closest("tr").remove();
+      recalculer(type);
+    });
+  });
 }
 
 function ajouterMesure(type) {
@@ -317,6 +340,112 @@ function ajouterMesure(type) {
 
   const boutonSupprimer = nouvelleLigne.querySelector('[data-action="supprimer-ligne"]');
   if (boutonSupprimer) {
-    boutonSupprimer.addEventListener("click", supprimerLigne);
+    boutonSupprimer.addEventListener("click", (evenement) => {
+      evenement.target.closest("tr").remove();
+      recalculer(type);
+    });
   }
+}
+
+// --- Calculs et conformité en temps réel ---------------------------------------
+
+function recalculer(type) {
+  switch (type) {
+    case "reception":
+      recalculerReception();
+      break;
+    case "cohesion":
+      recalculerEssai(COHESION_GARDER);
+      break;
+    case "adherence":
+      recalculerEssai(ADHERENCE_GARDER);
+      break;
+    case "ambiance":
+      recalculerAmbiance();
+      break;
+  }
+}
+
+function formatNombre(valeur, decimales = 2) {
+  return valeur === null || valeur === undefined ? "—" : valeur.toFixed(decimales);
+}
+
+function majBadge(element, conforme) {
+  if (!element) return;
+  element.classList.remove("conforme", "non-conforme");
+  if (conforme === null || conforme === undefined) {
+    element.textContent = "Non évalué";
+  } else if (conforme) {
+    element.textContent = "Conforme";
+    element.classList.add("conforme");
+  } else {
+    element.textContent = "Non conforme";
+    element.classList.add("non-conforme");
+  }
+}
+
+function recalculerEssai(typesAGarder) {
+  const tbody = document.querySelector("#tableau-mesures tbody");
+  const lignes = [...tbody.querySelectorAll("tr")];
+
+  const mesures = lignes.map((ligne) => ({
+    rupture: ligne.querySelector('[data-champ="rupture"]').value,
+    si: ligne.querySelector('[data-champ="si"]').value,
+    fi: ligne.querySelector('[data-champ="fi"]').value,
+  }));
+
+  const resultat = analyserEssai(mesures, typesAGarder);
+
+  lignes.forEach((ligne, index) => {
+    ligne.children[0].textContent = String(index + 1);
+    const { xi, garde } = resultat.lignes[index];
+    ligne.querySelector('[data-cell="xi"]').textContent = formatNombre(xi);
+    ligne.querySelector('[data-cell="garde"]').textContent =
+      xi === null ? "—" : (garde ? "Oui" : "Non");
+  });
+
+  document.getElementById("resultat-n").textContent = String(resultat.n_gardes);
+  document.getElementById("resultat-xm").textContent = formatNombre(resultat.xm);
+  document.getElementById("resultat-s").textContent = formatNombre(resultat.ecart);
+  document.getElementById("resultat-xm-s").textContent = formatNombre(resultat.xm_s);
+
+  majBadge(document.getElementById("badge-conformite"), resultat.conforme);
+}
+
+function recalculerAmbiance() {
+  const tbody = document.querySelector("#tableau-mesures tbody");
+
+  tbody.querySelectorAll("tr").forEach((ligne) => {
+    const valeurs = {};
+    AMBIANCE_COLONNES.forEach((col) => {
+      const champ = ligne.querySelector(`[data-champ="${col.cle}"]`);
+      if (champ) valeurs[col.cle] = champ.value;
+    });
+
+    const conforme = conformiteAmbianceLigne(valeurs);
+    const cellule = ligne.querySelector('[data-cell="conf"]');
+    cellule.classList.remove("conforme", "non-conforme");
+    if (conforme === null) {
+      cellule.textContent = "—";
+    } else if (conforme) {
+      cellule.textContent = "OK";
+      cellule.classList.add("conforme");
+    } else {
+      cellule.textContent = "NOK";
+      cellule.classList.add("non-conforme");
+    }
+  });
+}
+
+function recalculerReception() {
+  const reponses = {};
+  RECEPTION_CRITERES.forEach((critere, i) => {
+    const coche = document.querySelector(`input[name="critere-${i}"]:checked`);
+    reponses[critere] = coche ? coche.value : "";
+  });
+
+  const remontee = document.querySelector('input[name="remontee_humidite"]:checked');
+  const conforme = conformiteReception(reponses, remontee ? remontee.value : "non");
+
+  majBadge(document.getElementById("badge-conformite"), conforme);
 }
