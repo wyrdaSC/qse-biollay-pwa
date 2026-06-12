@@ -26,28 +26,38 @@ PDF** et de l'**envoyer par email**. Fonctionne **100 % hors-ligne** une fois in
 
 ## Captures d'écran
 
-> Les images ci-dessous sont des emplacements à compléter : prendre une capture de
-> chaque écran (sur ordinateur ou téléphone, après déploiement ou en local) et
-> l'enregistrer dans `docs/screenshots/` sous le nom indiqué. Elles s'afficheront alors
-> automatiquement ici et sur la page GitHub du dépôt.
-
-| Écran | Capture |
-| --- | --- |
-| Accueil (boutons des 4 fiches, fiches récentes) | `docs/screenshots/accueil.png` |
-| Formulaire (en-tête + mesures + conformité en direct) | `docs/screenshots/formulaire.png` |
-| Signature tactile | `docs/screenshots/signature.png` |
-| Consultation d'une fiche (résumé, PDF, email) | `docs/screenshots/consultation.png` |
-| Historique (filtres) | `docs/screenshots/historique.png` |
-| Paramètres (chantiers / participants) | `docs/screenshots/parametres.png` |
-
-```markdown
-![Accueil](docs/screenshots/accueil.png)
-![Formulaire](docs/screenshots/formulaire.png)
-![Signature](docs/screenshots/signature.png)
-![Consultation](docs/screenshots/consultation.png)
-![Historique](docs/screenshots/historique.png)
-![Paramètres](docs/screenshots/parametres.png)
-```
+<table>
+<tr>
+<td align="center" width="50%">
+<img src="docs/screenshots/accueil.png" width="380" alt="Écran d'accueil"><br>
+<sub>Accueil — boutons des 4 fiches, fiches récentes</sub>
+</td>
+<td align="center" width="50%">
+<img src="docs/screenshots/formulaire.png" width="380" alt="Formulaire de fiche"><br>
+<sub>Formulaire — en-tête, mesures, conformité en direct</sub>
+</td>
+</tr>
+<tr>
+<td align="center" width="50%">
+<img src="docs/screenshots/signature.png" width="380" alt="Signature tactile"><br>
+<sub>Signature tactile</sub>
+</td>
+<td align="center" width="50%">
+<img src="docs/screenshots/consultation.png" width="380" alt="Consultation d'une fiche"><br>
+<sub>Consultation — résumé, PDF, email</sub>
+</td>
+</tr>
+<tr>
+<td align="center" width="50%">
+<img src="docs/screenshots/historique.png" width="380" alt="Historique des fiches"><br>
+<sub>Historique — filtres par type et chantier</sub>
+</td>
+<td align="center" width="50%">
+<img src="docs/screenshots/parametres.png" width="380" alt="Paramètres"><br>
+<sub>Paramètres — chantiers / participants</sub>
+</td>
+</tr>
+</table>
 
 ---
 
