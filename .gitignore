@@ -1,2 +1,13 @@
 .DS_Store
 Thumbs.db
+
+# Dossiers locaux de brouillons / rapports PDF générés (l'app ne les crée pas
+# elle-même - tout est en IndexedDB/téléchargement navigateur - mais on les
+# ignore par sécurité si jamais créés manuellement dans le dépôt).
+/drafts/
+/brouillons/
+/reports/
+/rapports/
+/pdf/
+/pdfs/
+*.pdf
