@@ -68,7 +68,7 @@ export function creerPadSignature(canvas) {
     ctx.scale(ratio, ratio);
     ctx.lineWidth = 2;
     ctx.lineCap = "round";
-    ctx.strokeStyle = "#1A3557";
+    ctx.strokeStyle = "#1c2530";
     if (sauvegarde) chargerImage(sauvegarde);
   }
 

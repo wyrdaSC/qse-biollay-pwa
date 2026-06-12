@@ -14,7 +14,7 @@ import {
 } from "./forms-def.js";
 import { analyserEssai, conformiteAmbianceLigne } from "./calculations.js";
 
-const BLEU = [26, 53, 87];
+const MARQUE = [228, 31, 24];
 const VERT = [34, 139, 34];
 const ROUGE = [192, 57, 43];
 const GRIS = [240, 240, 240];
@@ -66,11 +66,11 @@ function assurerEspace(ctx, hauteur) {
   }
 }
 
-// Bandeau d'en-tête bleu : logo texte + titre de la fiche + N° de fiche.
+// Bandeau d'en-tête rouge : logo texte + titre de la fiche + N° de fiche.
 function dessinerEntete(ctx) {
   const { doc, titre, numero } = ctx;
 
-  doc.setFillColor(...BLEU);
+  doc.setFillColor(...MARQUE);
   doc.rect(0, 0, LARGEUR_PAGE, 26, "F");
 
   doc.setTextColor(255, 255, 255);
@@ -96,11 +96,11 @@ function dessinerEntete(ctx) {
   ctx.y = Y_DEBUT_CONTENU;
 }
 
-// Bandeau de titre de section (fond bleu, texte blanc).
+// Bandeau de titre de section (fond rouge, texte blanc).
 function titreSection(ctx, texte) {
   assurerEspace(ctx, 12);
   ctx.y += 2;
-  ctx.doc.setFillColor(...BLEU);
+  ctx.doc.setFillColor(...MARQUE);
   ctx.doc.rect(MARGE, ctx.y, LARGEUR_UTILE, 7, "F");
   ctx.doc.setTextColor(255, 255, 255);
   ctx.doc.setFont("helvetica", "bold");

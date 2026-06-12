@@ -1,9 +1,9 @@
 /* Application QSE Biollay — feuille de style mobile-first.
-   Palette : bleu foncé #1A3557, blanc, gris clair. */
+   Palette : rouge Biollay #E41F18 (logo), blanc, gris clair. */
 
 :root {
-  --bleu: #1A3557;
-  --bleu-clair: #2a4d7a;
+  --marque: #E41F18;
+  --marque-clair: #ff5248;
   --gris: #f0f2f5;
   --gris-bord: #d8dde3;
   --texte: #1c2530;
@@ -30,24 +30,23 @@ body {
 .topbar {
   position: sticky; top: 0; z-index: 20;
   display: flex; align-items: center; gap: 10px;
-  background: var(--bleu); color: #fff;
+  background: #fff; color: var(--marque);
   padding: 10px 14px;
+  border-bottom: 3px solid var(--marque);
 }
 .topbar__logo {
-  height: 30px; width: auto;
-  /* logo Biollay en rouge sur fond bleu : on le passe en blanc pour la lisibilité */
-  filter: brightness(0) invert(1);
+  height: 32px; width: auto;
 }
-.topbar__title { flex: 1; font-size: 16px; font-weight: 600; letter-spacing: .5px; }
+.topbar__title { flex: 1; font-size: 16px; font-weight: 700; letter-spacing: .5px; color: var(--marque); }
 .topbar__net { width: 12px; height: 12px; border-radius: 50%; background: #888; flex: none; }
 .topbar__net.online { background: #43d17a; }
 .topbar__net.offline { background: #e0a800; }
 
 /* --- Contenu --- */
 #ecran { padding: 16px 14px 90px; max-width: 900px; margin: 0 auto; }
-.page-title { font-size: 20px; margin: 6px 0 14px; color: var(--bleu); }
+.page-title { font-size: 20px; margin: 6px 0 14px; color: var(--marque); }
 .page-title small { font-weight: 400; color: #667; font-size: 14px; }
-.page-subtitle { font-size: 16px; margin: 22px 0 10px; color: var(--bleu); }
+.page-subtitle { font-size: 16px; margin: 22px 0 10px; color: var(--marque); }
 .vide { color: #889; font-style: italic; }
 
 /* --- Barre de navigation inférieure --- */
@@ -61,7 +60,7 @@ body {
   flex: 1; text-align: center; padding: 10px 4px 8px;
   text-decoration: none; color: #667; font-size: 12px;
 }
-.tabbar__item.actif { color: var(--bleu); font-weight: 600; }
+.tabbar__item.actif { color: var(--marque); font-weight: 600; }
 .tabbar__icone { display: block; font-size: 20px; line-height: 1; margin-bottom: 2px; }
 
 /* --- Écran d'accueil --- */
@@ -69,10 +68,10 @@ body {
 .carte-fiche {
   display: flex; flex-direction: column; justify-content: center;
   min-height: 96px; padding: 14px;
-  background: var(--bleu); color: #fff; text-decoration: none;
+  background: var(--marque); color: #fff; text-decoration: none;
   border-radius: var(--rayon); box-shadow: 0 2px 5px rgba(0,0,0,.12);
 }
-.carte-fiche:active { background: var(--bleu-clair); }
+.carte-fiche:active { background: var(--marque-clair); }
 .carte-fiche__label { font-weight: 600; font-size: 15px; }
 .carte-fiche__sous { font-size: 12px; opacity: .8; margin-top: 4px; }
 
@@ -102,14 +101,14 @@ body {
   background: var(--gris); color: #445;
 }
 .badge--brouillon { background: #e7ecf3; color: #445; }
-.badge--complet { background: #d4e7ff; color: #0b4a8a; }
+.badge--complet { background: #ffe9cc; color: #9a4d00; }
 .badge--envoye { background: #d8f3df; color: #1c6b34; }
 .badge--conforme { background: #d8f3df; color: #1c6b34; }
 .badge--non-conforme { background: #fbe1de; color: var(--rouge); }
 
 /* --- Formulaires --- */
 .champ { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
-.champ label { font-size: 13px; font-weight: 600; color: var(--bleu); }
+.champ label { font-size: 13px; font-weight: 600; color: var(--marque); }
 .champ input, .champ select {
   font-size: 15px; padding: 9px 10px;
   border: 1px solid var(--gris-bord); border-radius: var(--rayon);
@@ -131,7 +130,7 @@ body {
 .tableau-mesures th, .tableau-mesures td {
   border: 1px solid var(--gris-bord); padding: 6px 8px; font-size: 13px; text-align: center;
 }
-.tableau-mesures th { background: var(--gris); color: var(--bleu); white-space: nowrap; }
+.tableau-mesures th { background: var(--gris); color: var(--marque); white-space: nowrap; }
 .tableau-mesures td.critere-libelle { text-align: left; min-width: 160px; }
 .tableau-mesures td.critere-radios { white-space: nowrap; }
 .tableau-mesures input, .tableau-mesures select {
@@ -171,7 +170,7 @@ body {
   background: #fff; border: 1px solid var(--gris-bord); border-radius: var(--rayon);
   padding: 12px 14px; margin-bottom: 14px;
 }
-.signature-zone h3 { margin: 0 0 8px; font-size: 15px; color: var(--bleu); }
+.signature-zone h3 { margin: 0 0 8px; font-size: 15px; color: var(--marque); }
 .pad-signature-conteneur { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
 .pad-signature {
   width: 100%; max-width: 320px; height: 140px;
@@ -184,10 +183,10 @@ body {
   font-size: 15px; font-weight: 600; padding: 12px 18px;
   border: none; border-radius: var(--rayon); cursor: pointer;
 }
-.btn-principal { background: var(--bleu); color: #fff; }
-.btn-principal:active { background: var(--bleu-clair); }
-.btn-secondaire { background: var(--gris); color: var(--bleu); border: 1px solid var(--gris-bord); }
-.btn-texte { background: none; color: var(--bleu); padding: 6px 0; text-decoration: underline; }
+.btn-principal { background: var(--marque); color: #fff; }
+.btn-principal:active { background: var(--marque-clair); }
+.btn-secondaire { background: var(--gris); color: var(--marque); border: 1px solid var(--gris-bord); }
+.btn-texte { background: none; color: var(--marque); padding: 6px 0; text-decoration: underline; }
 .btn--desactive { opacity: .5; pointer-events: none; }
 
 .boutons-action {
@@ -210,7 +209,7 @@ body {
   border: 1px solid var(--gris-bord); border-radius: var(--rayon);
   background: #fff; color: #667; cursor: pointer;
 }
-.onglet-param.actif { background: var(--bleu); color: #fff; border-color: var(--bleu); }
+.onglet-param.actif { background: var(--marque); color: #fff; border-color: var(--marque); }
 
 .ligne-ajout { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
 .ligne-ajout input {
