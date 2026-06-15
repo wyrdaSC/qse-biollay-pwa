@@ -11,3 +11,6 @@ Thumbs.db
 /pdf/
 /pdfs/
 *.pdf
+
+# Exception : guide utilisateur livré avec le projet.
+!/docs/Guide_utilisateur_QSE_Biollay.pdf

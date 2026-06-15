@@ -8,6 +8,10 @@ PDF** et de l'**envoyer par email**. Fonctionne **100 % hors-ligne** une fois in
 **Technique : aucun framework, aucune étape de build.** Que des fichiers `.html`, `.css`,
 `.js` (modules ES) lisibles et modifiables directement.
 
+> Un guide d'utilisation simplifié, destiné aux utilisateurs finaux (sans le contenu
+> technique de ce README), est disponible en PDF :
+> [docs/Guide_utilisateur_QSE_Biollay.pdf](docs/Guide_utilisateur_QSE_Biollay.pdf).
+
 ---
 
 ## Sommaire
@@ -17,47 +21,24 @@ PDF** et de l'**envoyer par email**. Fonctionne **100 % hors-ligne** une fois in
 3. [Déployer sur GitHub Pages](#déployer-sur-github-pages)
 4. [Installer et utiliser sur téléphone / tablette](#installer-et-utiliser-sur-téléphone--tablette)
 5. [Guide d'utilisation de l'application](#guide-dutilisation-de-lapplication)
-6. [Organisation du projet](#organisation-du-projet)
-7. [Ajouter un nouveau type de fiche](#ajouter-un-nouveau-type-de-fiche)
-8. [Tests](#tests)
-9. [Charte graphique](#charte-graphique)
+6. [Critères de conformité appliqués](#critères-de-conformité-appliqués)
+7. [Organisation du projet](#organisation-du-projet)
+8. [Ajouter un nouveau type de fiche](#ajouter-un-nouveau-type-de-fiche)
+9. [Tests](#tests)
+10. [Charte graphique](#charte-graphique)
 
 ---
 
 ## Captures d'écran
 
-<table>
-<tr>
-<td align="center" width="50%">
-<img src="docs/screenshots/accueil.png" width="380" alt="Écran d'accueil"><br>
-<sub>Accueil — boutons des 4 fiches, fiches récentes</sub>
-</td>
-<td align="center" width="50%">
-<img src="docs/screenshots/formulaire.png" width="380" alt="Formulaire de fiche"><br>
-<sub>Formulaire — en-tête, mesures, conformité en direct</sub>
-</td>
-</tr>
-<tr>
-<td align="center" width="50%">
-<img src="docs/screenshots/signature.png" width="380" alt="Signature tactile"><br>
-<sub>Signature tactile</sub>
-</td>
-<td align="center" width="50%">
-<img src="docs/screenshots/consultation.png" width="380" alt="Consultation d'une fiche"><br>
-<sub>Consultation — résumé, PDF, email</sub>
-</td>
-</tr>
-<tr>
-<td align="center" width="50%">
-<img src="docs/screenshots/historique.png" width="380" alt="Historique des fiches"><br>
-<sub>Historique — filtres par type et chantier</sub>
-</td>
-<td align="center" width="50%">
-<img src="docs/screenshots/parametres.png" width="380" alt="Paramètres"><br>
-<sub>Paramètres — chantiers / participants</sub>
-</td>
-</tr>
-</table>
+| | |
+|---|---|
+| ![Écran d'accueil](docs/screenshots/accueil.png) | ![Formulaire de fiche](docs/screenshots/formulaire.png) |
+| Accueil — boutons des 4 fiches, fiches récentes | Formulaire — en-tête, mesures, conformité en direct |
+| ![Signature tactile](docs/screenshots/signature.png) | ![Consultation d'une fiche](docs/screenshots/consultation.png) |
+| Signature tactile | Consultation — résumé, PDF, email |
+| ![Historique des fiches](docs/screenshots/historique.png) | ![Paramètres](docs/screenshots/parametres.png) |
+| Historique — filtres par type et chantier | Paramètres — chantiers / participants |
 
 ---
 
@@ -198,6 +179,21 @@ Deux onglets :
 - **Participants** : liste des contrôleurs/signataires connus, même principe.
 
 Ces listes servent uniquement à l'auto-complétion dans les formulaires.
+
+---
+
+## Critères de conformité appliqués
+
+Le badge « Conforme » / « Non conforme » affiché sur chaque fiche (et dans le PDF généré)
+est calculé automatiquement par [`js/calculations.js`](js/calculations.js) selon les
+règles suivantes :
+
+| Type de fiche | Règle de conformité appliquée |
+|---|---|
+| **Réception du support** (SIA 252) | Conforme si les 9 critères Oui/Non (Propre, Compact, Résistant aux chocs, Non fissuré, Exempt de laitance, Sec en surface, Teneur en eau (méthode CM), Résistance à l'arrachement ≥ 1.5 MPa, Rugosité) sont **tous à « Oui »**, **et** qu'aucune remontée d'humidité n'est signalée. |
+| **Cohésion superficielle du support** (essai d'arrachement) | Pour chaque mesure : xi = Fi / Si (force / surface, en N/mm²). Seules les ruptures de type **A** sont conservées pour le calcul de la moyenne xm et de l'écart-type s. Conforme si **xm > 1.5 MPa** et **(xm − s) ≥ 1.0 MPa**. |
+| **Adhérence sur le support** (essai d'arrachement) | Même méthode que la cohésion (xi = Fi / Si), mais les ruptures conservées sont **A, A-B et B**. Conforme si **xm > 1.5 MPa** et **(xm − s) ≥ 1.0 MPa**. |
+| **Conditions d'ambiance et d'environnement** | Pour chaque relevé renseigné : Hs ≤ 4 %, Hr ≤ 75 %, T° air / support / produit comprises entre 10 °C et 30 °C, et **T° support ≥ T° point de rosée + 3 °C**. La fiche est conforme si **tous** les relevés renseignés respectent ces bornes. |
 
 ---
 
