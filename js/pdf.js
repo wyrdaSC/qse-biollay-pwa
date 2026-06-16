@@ -442,9 +442,13 @@ export async function genererPdf(fiche) {
   return doc.output("blob");
 }
 
-// Nom de fichier : [TYPE]-[CHANTIER]-[DATE].pdf, assaini (§7).
+// Nom de fichier : CHANTIER_TYPE_YYYYMMDD.pdf
+const TYPE_ACRONYME = { reception: "REC", cohesion: "COH", adherence: "ADH", ambiance: "AMB" };
+
 export function nomFichier(fiche) {
-  const brut = `${fiche.type}-${fiche.chantier || ""}-${fiche.date || ""}`;
-  const assaini = brut.replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_+|_+$/g, "");
-  return `${assaini || "fiche"}.pdf`;
+  const chantier = (fiche.chantier || "Chantier")
+    .replace(/[^a-zA-Z0-9]/g, "_").replace(/^_+|_+$/g, "");
+  const type = TYPE_ACRONYME[fiche.type] || fiche.type.toUpperCase();
+  const date = (fiche.date || "").replace(/-/g, "");
+  return `${chantier}_${type}_${date}.pdf`;
 }
