@@ -138,6 +138,11 @@ body {
   border-radius: 6px; font-size: 13px; text-align: center; box-sizing: border-box;
 }
 .tableau-mesures input.champ-solution { min-width: 140px; text-align: left; }
+.btn-solution-toggle {
+  font-size: 12px; color: var(--marque); background: none;
+  border: 1px dashed var(--marque); border-radius: 6px;
+  padding: 3px 8px; cursor: pointer; white-space: nowrap;
+}
 .tableau-mesures td[data-cell] { font-weight: 600; white-space: nowrap; }
 .tableau-mesures td[data-cell].conforme { color: #1c6b34; }
 .tableau-mesures td[data-cell].non-conforme { color: var(--rouge); }

@@ -130,6 +130,11 @@ function corpsReception(data) {
   const lignes = RECEPTION_CRITERES.map((critere, i) => {
     const valeur = criteres[critere] || "";
     const solutionTexte = solutions[critere] || "";
+    const tdSolution = solutionTexte
+      ? `<input type="text" class="champ-solution" data-solution-index="${i}" placeholder="Si non, solutions" value="${echapperHtml(solutionTexte)}">`
+      : `<button type="button" class="btn-solution-toggle" data-solution-index="${i}">+ Solution</button>
+         <input type="text" class="champ-solution" data-solution-index="${i}" placeholder="Si non, solutions" value="" hidden>`;
+
     return `
       <tr>
         <td class="critere-libelle">${echapperHtml(critere)}</td>
@@ -137,7 +142,7 @@ function corpsReception(data) {
           <label><input type="radio" name="critere-${i}" value="oui" data-critere-index="${i}" ${valeur === "oui" ? "checked" : ""}> Oui</label>
           <label><input type="radio" name="critere-${i}" value="non" data-critere-index="${i}" ${valeur === "non" ? "checked" : ""}> Non</label>
         </td>
-        <td><input type="text" class="champ-solution" data-solution-index="${i}" placeholder="Si non, solutions" value="${echapperHtml(solutionTexte)}"></td>
+        <td>${tdSolution}</td>
       </tr>
     `;
   }).join("");
@@ -308,6 +313,7 @@ function brancherEvenements(type, ficheExistante) {
   }
 
   brancherSuppressions(type);
+  brancherTogglesSolution();
 
   const formulaire = document.getElementById("formulaire-fiche");
   formulaire.addEventListener("input", () => recalculer(type));
@@ -323,6 +329,17 @@ function brancherEvenements(type, ficheExistante) {
   });
 
   recalculer(type);
+}
+
+function brancherTogglesSolution() {
+  document.querySelectorAll(".btn-solution-toggle").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const input = btn.nextElementSibling;
+      btn.hidden = true;
+      input.hidden = false;
+      input.focus();
+    });
+  });
 }
 
 function brancherSuppressions(type) {
@@ -491,7 +508,7 @@ function recupererDonneesReception() {
   RECEPTION_CRITERES.forEach((critere, i) => {
     const coche = document.querySelector(`input[name="critere-${i}"]:checked`);
     reponses[critere] = coche ? coche.value : "";
-    const solution = document.querySelector(`[data-solution-index="${i}"]`);
+    const solution = document.querySelector(`input[data-solution-index="${i}"]`);
     solutions[critere] = solution ? solution.value.trim() : "";
   });
 
