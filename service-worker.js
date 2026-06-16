@@ -1,9 +1,12 @@
 // Service worker : stratégie "cache-first" pour un fonctionnement 100% hors-ligne.
 //
-// IMPORTANT : à chaque ajout/modification de fichier, incrémenter CACHE_VERSION
-// pour forcer la mise à jour du cache (sinon les anciens fichiers restent servis).
+// VERSIONNAGE : schéma "v2.x" depuis l'ajout de la couche serveur central
+// (l'app hors-ligne seule était allée jusqu'à v15 sous l'ancien schéma incrémental v1..v15).
+// Baseline = v2.0. À CHAQUE ajout/modification de fichier : incrémenter CACHE_VERSION
+// (v2.1, v2.2, …) ET ajouter le(s) nouveau(x) fichier(s) à RESSOURCES — sinon les anciens
+// fichiers restent servis depuis le cache (piège connu).
 
-const CACHE_VERSION = "v15";
+const CACHE_VERSION = "v2.0";
 const CACHE_NAME = `qse-biollay-${CACHE_VERSION}`;
 
 // Liste de toutes les ressources nécessaires au fonctionnement hors-ligne.
