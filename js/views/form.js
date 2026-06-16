@@ -125,9 +125,19 @@ function corpsSpecifique(type, data) {
 function corpsReception(data) {
   const remontee = data.remontee_humidite || "non";
   const solutions = data.solutions || {};
+  const criteres = data.criteres || {};
 
   const lignes = RECEPTION_CRITERES.map((critere, i) => {
     const solutionTexte = solutions[critere] || "";
+    const valeurConforme = criteres[critere] || "";
+
+    const labelToggle = valeurConforme === "oui" ? "✓ Oui"
+                      : valeurConforme === "non" ? "✗ Non"
+                      : "—";
+    const classeToggle = valeurConforme === "oui" ? "btn-conforme-toggle oui"
+                       : valeurConforme === "non" ? "btn-conforme-toggle non"
+                       : "btn-conforme-toggle";
+
     const tdSolution = solutionTexte
       ? `<input type="text" class="champ-solution" data-solution-index="${i}" placeholder="Décrire la solution…" value="${echapperHtml(solutionTexte)}">`
       : `<button type="button" class="btn-solution-toggle" data-solution-index="${i}">+ Solution</button>
@@ -136,6 +146,9 @@ function corpsReception(data) {
     return `
       <tr>
         <td class="critere-libelle">${echapperHtml(critere)}</td>
+        <td class="critere-conforme">
+          <button type="button" class="${classeToggle}" data-conforme-index="${i}" data-value="${valeurConforme}">${labelToggle}</button>
+        </td>
         <td class="critere-solution">${tdSolution}</td>
       </tr>
     `;
@@ -153,7 +166,11 @@ function corpsReception(data) {
     <div class="tableau-conteneur">
       <table class="tableau-mesures tableau-reception">
         <thead>
-          <tr><th>Critère</th><th class="th-solution">Si non, solutions</th></tr>
+          <tr>
+            <th>Critère</th>
+            <th class="th-conforme">Conforme</th>
+            <th class="th-solution">Si non, solutions</th>
+          </tr>
         </thead>
         <tbody>${lignes}</tbody>
       </table>
@@ -308,6 +325,7 @@ function brancherEvenements(type, ficheExistante) {
 
   brancherSuppressions(type);
   brancherTogglesSolution();
+  brancherToggesConforme();
 
   const formulaire = document.getElementById("formulaire-fiche");
   formulaire.addEventListener("input", () => recalculer(type));
@@ -332,6 +350,19 @@ function brancherTogglesSolution() {
       btn.hidden = true;
       input.hidden = false;
       input.focus();
+    });
+  });
+}
+
+function brancherToggesConforme() {
+  document.querySelectorAll(".btn-conforme-toggle").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const actuel = btn.dataset.value;
+      const suivant = actuel === "" ? "oui" : actuel === "oui" ? "non" : "";
+      btn.dataset.value = suivant;
+      btn.textContent = suivant === "oui" ? "✓ Oui" : suivant === "non" ? "✗ Non" : "—";
+      btn.className = "btn-conforme-toggle" + (suivant ? " " + suivant : "");
+      recalculerReception();
     });
   });
 }
@@ -463,14 +494,21 @@ function recalculerAmbiance() {
 
 function recalculerReception() {
   const reponses = {};
+  let toutEvalue = true;
   RECEPTION_CRITERES.forEach((critere, i) => {
-    const solution = document.querySelector(`input[data-solution-index="${i}"]`);
-    reponses[critere] = solution && solution.value.trim() ? "non" : "oui";
+    const btn = document.querySelector(`.btn-conforme-toggle[data-conforme-index="${i}"]`);
+    const val = btn ? btn.dataset.value : "";
+    if (!val) toutEvalue = false;
+    reponses[critere] = val || "oui";
   });
+
+  if (!toutEvalue) {
+    majBadge(document.getElementById("badge-conformite"), null);
+    return;
+  }
 
   const remontee = document.querySelector('input[name="remontee_humidite"]:checked');
   const conforme = conformiteReception(reponses, remontee ? remontee.value : "non");
-
   majBadge(document.getElementById("badge-conformite"), conforme);
 }
 
@@ -500,10 +538,11 @@ function recupererDonneesReception() {
   const reponses = {};
   const solutions = {};
   RECEPTION_CRITERES.forEach((critere, i) => {
+    const btn = document.querySelector(`.btn-conforme-toggle[data-conforme-index="${i}"]`);
+    reponses[critere] = btn ? (btn.dataset.value || "oui") : "oui";
+
     const solution = document.querySelector(`input[data-solution-index="${i}"]`);
-    const texte = solution ? solution.value.trim() : "";
-    solutions[critere] = texte;
-    reponses[critere] = texte ? "non" : "oui";
+    solutions[critere] = solution ? solution.value.trim() : "";
   });
 
   const remontee = document.querySelector('input[name="remontee_humidite"]:checked');

@@ -140,13 +140,26 @@ body {
   min-width: 0; width: 100%; text-align: left;
   white-space: normal; word-break: break-word;
 }
-.tableau-mesures td.critere-solution { width: 55%; min-width: 180px; vertical-align: middle; }
-.tableau-reception { min-width: 360px; }
-.tableau-reception .th-solution { width: 55%; }
+.tableau-mesures td.critere-solution { width: 38%; min-width: 150px; vertical-align: middle; }
+.tableau-mesures td.critere-conforme { width: 14%; min-width: 72px; text-align: center; vertical-align: middle; white-space: nowrap; }
+.tableau-reception { min-width: 460px; }
+.tableau-reception .th-conforme { width: 14%; white-space: nowrap; }
+.tableau-reception .th-solution { width: 38%; }
 .btn-solution-toggle {
   font-size: 12px; color: var(--marque); background: none;
   border: 1px dashed var(--marque); border-radius: 6px;
   padding: 3px 8px; cursor: pointer; white-space: nowrap;
+}
+.btn-conforme-toggle {
+  font-size: 12px; font-weight: 600; border-radius: 6px;
+  padding: 4px 8px; cursor: pointer; white-space: nowrap; width: 100%;
+  background: var(--gris); color: #667; border: 1px solid var(--gris-bord);
+}
+.btn-conforme-toggle.oui {
+  background: #d8f3df; color: #1c6b34; border-color: #a3d9b1;
+}
+.btn-conforme-toggle.non {
+  background: #fbe1de; color: var(--rouge); border-color: #f3b8b3;
 }
 .tableau-mesures td[data-cell] { font-weight: 600; white-space: nowrap; }
 .tableau-mesures td[data-cell].conforme { color: #1c6b34; }
