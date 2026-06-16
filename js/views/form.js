@@ -124,25 +124,19 @@ function corpsSpecifique(type, data) {
 
 function corpsReception(data) {
   const remontee = data.remontee_humidite || "non";
-  const criteres = data.criteres || {};
   const solutions = data.solutions || {};
 
   const lignes = RECEPTION_CRITERES.map((critere, i) => {
-    const valeur = criteres[critere] || "";
     const solutionTexte = solutions[critere] || "";
     const tdSolution = solutionTexte
-      ? `<input type="text" class="champ-solution" data-solution-index="${i}" placeholder="Si non, solutions" value="${echapperHtml(solutionTexte)}">`
+      ? `<input type="text" class="champ-solution" data-solution-index="${i}" placeholder="Décrire la solution…" value="${echapperHtml(solutionTexte)}">`
       : `<button type="button" class="btn-solution-toggle" data-solution-index="${i}">+ Solution</button>
-         <input type="text" class="champ-solution" data-solution-index="${i}" placeholder="Si non, solutions" value="" hidden>`;
+         <input type="text" class="champ-solution" data-solution-index="${i}" placeholder="Décrire la solution…" value="" hidden>`;
 
     return `
       <tr>
         <td class="critere-libelle">${echapperHtml(critere)}</td>
-        <td class="critere-radios">
-          <label><input type="radio" name="critere-${i}" value="oui" data-critere-index="${i}" ${valeur === "oui" ? "checked" : ""}> Oui</label>
-          <label><input type="radio" name="critere-${i}" value="non" data-critere-index="${i}" ${valeur === "non" ? "checked" : ""}> Non</label>
-        </td>
-        <td>${tdSolution}</td>
+        <td class="critere-solution">${tdSolution}</td>
       </tr>
     `;
   }).join("");
@@ -157,9 +151,9 @@ function corpsReception(data) {
       </div>
     </div>
     <div class="tableau-conteneur">
-      <table class="tableau-mesures">
+      <table class="tableau-mesures tableau-reception">
         <thead>
-          <tr><th>Critère</th><th>Conforme</th><th>Si non, solutions</th></tr>
+          <tr><th>Critère</th><th class="th-solution">Si non, solutions</th></tr>
         </thead>
         <tbody>${lignes}</tbody>
       </table>
@@ -470,8 +464,8 @@ function recalculerAmbiance() {
 function recalculerReception() {
   const reponses = {};
   RECEPTION_CRITERES.forEach((critere, i) => {
-    const coche = document.querySelector(`input[name="critere-${i}"]:checked`);
-    reponses[critere] = coche ? coche.value : "";
+    const solution = document.querySelector(`input[data-solution-index="${i}"]`);
+    reponses[critere] = solution && solution.value.trim() ? "non" : "oui";
   });
 
   const remontee = document.querySelector('input[name="remontee_humidite"]:checked');
@@ -506,10 +500,10 @@ function recupererDonneesReception() {
   const reponses = {};
   const solutions = {};
   RECEPTION_CRITERES.forEach((critere, i) => {
-    const coche = document.querySelector(`input[name="critere-${i}"]:checked`);
-    reponses[critere] = coche ? coche.value : "";
     const solution = document.querySelector(`input[data-solution-index="${i}"]`);
-    solutions[critere] = solution ? solution.value.trim() : "";
+    const texte = solution ? solution.value.trim() : "";
+    solutions[critere] = texte;
+    reponses[critere] = texte ? "non" : "oui";
   });
 
   const remontee = document.querySelector('input[name="remontee_humidite"]:checked');

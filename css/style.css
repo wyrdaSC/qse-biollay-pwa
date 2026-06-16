@@ -132,12 +132,17 @@ body {
 }
 .tableau-mesures th { background: var(--gris); color: var(--marque); white-space: nowrap; }
 .tableau-mesures td.critere-libelle { text-align: left; min-width: 160px; }
-.tableau-mesures td.critere-radios { white-space: nowrap; }
 .tableau-mesures input, .tableau-mesures select {
   width: 100%; min-width: 56px; padding: 4px; border: 1px solid var(--gris-bord);
   border-radius: 6px; font-size: 13px; text-align: center; box-sizing: border-box;
 }
-.tableau-mesures input.champ-solution { min-width: 140px; text-align: left; }
+.tableau-mesures input.champ-solution {
+  min-width: 0; width: 100%; text-align: left;
+  white-space: normal; word-break: break-word;
+}
+.tableau-mesures td.critere-solution { width: 55%; min-width: 180px; vertical-align: middle; }
+.tableau-reception { min-width: 360px; }
+.tableau-reception .th-solution { width: 55%; }
 .btn-solution-toggle {
   font-size: 12px; color: var(--marque); background: none;
   border: 1px dashed var(--marque); border-radius: 6px;
