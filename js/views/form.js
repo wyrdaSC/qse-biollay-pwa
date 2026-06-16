@@ -63,7 +63,7 @@ export async function rendreFormulaire(type, ficheExistante = null) {
       <section>
         <h2 class="page-subtitle">Signatures</h2>
         ${zoneSignature("applicateur", "Applicateur", data, entete)}
-        ${zoneSignature("controleur", "Contrôleur extérieur", data, entete)}
+        ${zoneSignature("controleur", "Visa Client", data, entete)}
       </section>
 
       <div class="boutons-action">
